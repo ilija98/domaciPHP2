@@ -221,6 +221,41 @@
 
     }
 
+//funkcija za put
+    $.put = function(url, data, callback, type){
+
+if ( $.isFunction(data) ){
+  type = type || callback,
+  callback = data,
+  data = {}
+}
+
+return $.ajax({
+  url: url,
+  type: 'PUT',
+  success: callback,
+  data: data,
+  contentType: type
+});
+}
+
+//delete funkcija
+$.delete = function(url, data, callback, type){
+
+if ( $.isFunction(data) ){
+  type = type || callback,
+      callback = data,
+      data = {}
+}
+
+return $.ajax({
+  url: url,
+  type: 'DELETE',
+  success: callback,
+  data: data,
+  contentType: type
+});
+}
 
     //funkcija posaljiZahtev obrađuje pomoću AJAX-a zahteve koje šaljemo ka serveru
     function posaljiZahtev(){
@@ -288,9 +323,47 @@
                     break;
                 case "put":
                     //kod za bonus poene
+                    if(tabela=="radio_novosti"){
+                        var values = {
+                            "naslov": $("input[name=naslov_novosti_put]").val(),
+                            "tekst":$("#tekst_novosti_put").val(),
+                            "id": $("input[name=id_novosti_put]").val(),
+                            "kategorija_id": parseInt($("#kategorija_odabir_put").val()),
+                        };
+                        var id = $("input[name=id_novosti_put]").val();
+                        console.log(values);  
+                        $.put("http://localhost:8080/rest/rest/novosti/"+id, JSON.stringify(values),function(data){
+                            alert("Odgovor od servera > "+data['poruka']);
+                        });
+
+                    }else{                        
+                        var values ={
+                            "kategorija": $("input[name=kategorija_naziv_put]").val(),
+                        }
+                        var id = $("input[name=id_kategorije]").val();
+                        console.log(values);
+                        $.put("http://localhost:8080/rest/rest/kategorije/"+id, JSON.stringify(values),function(data){
+                            alert("Odgovor od servera > "+data['poruka']);
+                        });
+                    }
+
                     break;
                 case "delete":
                     //kod za bonus poene
+                    if(tabela=="radio_novosti"){
+                        var id = $("input[name=brisanje]").val();
+                        console.log(values);  
+                        $.delete("http://localhost:8080/rest/rest/novosti/"+id,function(data){
+                            alert("Odgovor od servera > "+data['poruka']);
+                        });
+
+                    }else{                        
+                        var id = $("input[name=brisanje]").val();
+                        console.log(values);
+                        $.delete("http://localhost:8080/rest/rest/kategorije/"+id ,function(data){
+                            alert("Odgovor od servera > "+data['poruka']);
+                        });
+                    }   
                     break;
                 default:
                     console.log("default");
